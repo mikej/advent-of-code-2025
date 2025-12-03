@@ -26,7 +26,12 @@ func main() {
 		endRange, _ := strconv.ParseInt(parts[1], 10, 64)
 
 		for i := startRange; i <= endRange; i++ {
-			if isInvalid(i) {
+			invalid, err := isInvalid(i)
+			if err != nil {
+				fmt.Printf("Error checking number %d: %v\n", i, err)
+				return
+			}
+			if invalid {
 				total += i
 			}
 		}
@@ -35,15 +40,30 @@ func main() {
 	fmt.Println("Total is", total)
 }
 
-func isInvalid(i int64) bool {
+func isInvalid(i int64) (bool, error) {
 	str := strconv.FormatInt(i, 10)
 
-	if len(str)%2 == 1 {
-		return false
+	for i := 2; i <= len(str); i++ {
+		if len(str)%i != 0 {
+			continue
+		}
+
+		parts, err := parts(str, i)
+		if err != nil {
+			return false, err
+		}
+
+		same, err := allSame(parts)
+		if err != nil {
+			return false, err
+		}
+		
+		if same {
+			return true, nil
+		}
 	}
 
-	parts, _ := parts(str, 2)
-	return allSame(parts)
+	return false, nil
 }
 
 func parts(str string, n int) ([]string, error) {
@@ -63,16 +83,19 @@ func parts(str string, n int) ([]string, error) {
 	return parts, nil
 }
 
-func allSame(s []string) bool {
+func allSame(s []string) (bool, error) {
+	if s == nil {
+		return false, fmt.Errorf("nil array")
+	}
 	if len(s) == 0 {
-		return true
+		return true, nil
 	}
 
 	for i := 1; i < len(s); i++ {
 		if s[i] != s[0] {
-			return false
+			return false, nil
 		}
 	}
 
-	return true
+	return true, nil
 }
