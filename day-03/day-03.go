@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func main() {
@@ -20,7 +21,7 @@ func main() {
 	total := 0
 	for scanner.Scan() {
 		line := scanner.Text()
-		joltageForLine, err := maxJoltage(line)
+		joltageForLine, err := maxJoltage2(line, 12)
 		if err != nil {
 			fmt.Println("Error getting joltage for line", err)
 		}
@@ -57,5 +58,32 @@ func maxJoltage(line string) (int, error) {
 	}
 
 	number, _ := strconv.Atoi(maxFirstDigit + maxSecondDigit)
+	return number, nil
+}
+
+func maxJoltage2(line string, digitsToUse int) (int, error) {
+	if len(line) < digitsToUse {
+		return 0, fmt.Errorf("need at least %d digits", digitsToUse)
+	}
+
+	var startSearchAt = 0
+	var digits = make([]string, digitsToUse)
+
+	for digit := 0; digit < digitsToUse; digit++ {
+		digits[digit] = string(line[startSearchAt])
+		var endSearchAt = len(line) - (digitsToUse - digit)
+		var maxIndex = startSearchAt
+
+		for i := startSearchAt + 1; i <= endSearchAt; i++ {
+			if string(line[i]) > digits[digit] {
+				digits[digit] = string(line[i])
+				maxIndex = i
+			}
+		}
+
+		startSearchAt = maxIndex + 1
+	}
+
+	number, _ := strconv.Atoi(strings.Join(digits, ""))
 	return number, nil
 }
