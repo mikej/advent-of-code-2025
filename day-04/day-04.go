@@ -24,16 +24,26 @@ func main() {
 		}
 	}
 
-	accessibleRolls := 0
-	for i := range grid {
-		for j := range grid[i] {
-			if grid[i][j] && countNeighboours(grid, i, j) < 4 {
-				accessibleRolls++
+	totalRollsRemoved := 0
+
+	for {
+		accessibleRolls := 0
+		for i := range grid {
+			for j := range grid[i] {
+				if grid[i][j] && countNeighboours(grid, i, j) < 4 {
+					grid[i][j] = false
+					accessibleRolls++
+				}
 			}
 		}
+
+		if accessibleRolls == 0 {
+			break
+		}
+		totalRollsRemoved += accessibleRolls
 	}
 
-	fmt.Println(accessibleRolls)
+	fmt.Println(totalRollsRemoved)
 }
 
 func countNeighboours(grid [][]bool, x, y int) int {
