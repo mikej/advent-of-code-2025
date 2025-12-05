@@ -61,14 +61,6 @@ func (r Range) Contains(n int) bool {
 	return n >= r.Start && n <= r.End
 }
 
-func (r Range) Values() []int {
-	values := make([]int, r.End-r.Start+1)
-	for i := r.Start; i <= r.End; i++ {
-		values[i-r.Start] = i
-	}
-	return values
-}
-
 func ParseRanges(ranges []string) ([]Range, error) {
 	parsedRanges := make([]Range, len(ranges))
 	for i, rangeStr := range ranges {
