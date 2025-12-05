@@ -53,8 +53,7 @@ func SplitInput(input string) ([]string, []string) {
 }
 
 type Range struct {
-	Start int
-	End   int
+	Start, End int
 }
 
 func (r Range) Contains(n int) bool {
