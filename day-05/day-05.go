@@ -32,3 +32,15 @@ func ParseRanges(ranges []string) ([]Range, error) {
 
 	return parsedRanges, nil
 }
+
+func ParseIds(strings []string) ([]int, error) {
+	ids := make([]int, len(strings))
+	for i, str := range strings {
+		id, err := strconv.Atoi(str)
+		if err != nil {
+			return nil, err
+		}
+		ids[i] = id
+	}
+	return ids, nil
+}

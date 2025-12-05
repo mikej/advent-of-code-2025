@@ -59,15 +59,3 @@ func TestParseAvailableIds(t *testing.T) {
 		t.Errorf("Expected second id to be 5, got %d", result[1])
 	}
 }
-
-func ParseIds(strings []string) ([]int, error) {
-	ids := make([]int, len(strings))
-	for i, str := range strings {
-		id, err := strconv.Atoi(str)
-		if err != nil {
-			return nil, err
-		}
-		ids[i] = id
-	}
-	return ids, nil
-}
