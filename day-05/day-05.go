@@ -1,9 +1,49 @@
 package main
 
 import (
+	"fmt"
+	"os"
 	"strconv"
 	"strings"
 )
+
+func main() {
+	contents, err := os.ReadFile("/Users/mike/Downloads/input-day-5.txt")
+	if err != nil {
+		fmt.Println("Error reading file", err)
+		return
+	}
+
+	rangeStrings, idStrings := SplitInput(string(contents))
+	ranges, err := ParseRanges(rangeStrings)
+	if err != nil {
+		fmt.Println("Error parsing ranges", err)
+		return
+	}
+	ids, err := ParseIds(idStrings)
+	if err != nil {
+		fmt.Println("Error parsing ids", err)
+	}
+
+	count := 0
+	for _, id := range ids {
+		if isAvailable(id, ranges) {
+			count++
+		}
+	}
+
+	fmt.Println(count)
+}
+
+func isAvailable(id int, ranges []Range) bool {
+	for _, r := range ranges {
+		if r.Contains(id) {
+			return true
+		}
+	}
+
+	return false
+}
 
 func SplitInput(input string) ([]string, []string) {
 	text := strings.TrimRight(string(input), "\n")
