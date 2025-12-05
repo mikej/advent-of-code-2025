@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strconv"
 	"testing"
 )
 
@@ -41,4 +42,32 @@ func TestParseRanges(t *testing.T) {
 	if result[1].Start != 10 || result[1].End != 14 {
 		t.Errorf("Expected range 10-14, got %d-%d", result[0].Start, result[0].End)
 	}
+}
+
+func TestParseAvailableIds(t *testing.T) {
+	result, err := ParseIds([]string{"1", "5"})
+	if err != nil {
+		t.Errorf("Unexpected error parsing ids: %v", err)
+	}
+	if len(result) != 2 {
+		t.Errorf("Expected 2 ids, got %d", len(result))
+	}
+	if result[0] != 1 {
+		t.Errorf("Expected first id to be 1, got %d", result[0])
+	}
+	if result[1] != 5 {
+		t.Errorf("Expected second id to be 5, got %d", result[1])
+	}
+}
+
+func ParseIds(strings []string) ([]int, error) {
+	ids := make([]int, len(strings))
+	for i, str := range strings {
+		id, err := strconv.Atoi(str)
+		if err != nil {
+			return nil, err
+		}
+		ids[i] = id
+	}
+	return ids, nil
 }
