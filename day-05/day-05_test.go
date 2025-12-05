@@ -1,8 +1,6 @@
 package main
 
 import (
-	"strconv"
-	"strings"
 	"testing"
 )
 
@@ -43,27 +41,4 @@ func TestParseRanges(t *testing.T) {
 	if result[1].Start != 10 || result[1].End != 14 {
 		t.Errorf("Expected range 10-14, got %d-%d", result[0].Start, result[0].End)
 	}
-}
-
-type Range struct {
-	Start int
-	End   int
-}
-
-func ParseRanges(ranges []string) ([]Range, error) {
-	parsedRanges := make([]Range, len(ranges))
-	for i, rangeStr := range ranges {
-		parts := strings.Split(rangeStr, "-")
-		rangeStart, err := strconv.Atoi(parts[0])
-		if err != nil {
-			return nil, err
-		}
-		rangeEnd, err := strconv.Atoi(parts[1])
-		if err != nil {
-			return nil, err
-		}
-		parsedRanges[i] = Range{Start: rangeStart, End: rangeEnd}
-	}
-
-	return parsedRanges, nil
 }
