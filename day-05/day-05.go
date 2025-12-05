@@ -32,7 +32,7 @@ func main() {
 		}
 	}
 
-	fmt.Println(count)
+	fmt.Printf("Count of fresh items: %d\n", count)
 }
 
 func isAvailable(id int, ranges []Range) bool {
