@@ -6,7 +6,9 @@ import (
 )
 
 func SplitInput(input string) ([]string, []string) {
-	parts := strings.SplitN(input, "\n\n", 2)
+	text := strings.TrimRight(string(input), "\n")
+
+	parts := strings.SplitN(text, "\n\n", 2)
 	return strings.Split(parts[0], "\n"), strings.Split(parts[1], "\n")
 }
 
