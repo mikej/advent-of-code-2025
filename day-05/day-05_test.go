@@ -1,7 +1,6 @@
 package main
 
 import (
-	"strconv"
 	"testing"
 )
 
@@ -57,5 +56,25 @@ func TestParseAvailableIds(t *testing.T) {
 	}
 	if result[1] != 5 {
 		t.Errorf("Expected second id to be 5, got %d", result[1])
+	}
+}
+
+func TestRange_Contains(t *testing.T) {
+	r := Range{Start: 3, End: 5}
+
+	if !r.Contains(3) {
+		t.Errorf("Expected range 3-5 to contain 3")
+	}
+
+	if !r.Contains(4) {
+		t.Errorf("Expected range 3-5 to contain 4")
+	}
+
+	if !r.Contains(5) {
+		t.Errorf("Expected range 3-5 to contain 5")
+	}
+
+	if r.Contains(7) {
+		t.Errorf("Expected range 3-5 not to contain 7")
 	}
 }

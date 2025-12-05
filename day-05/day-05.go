@@ -15,6 +15,10 @@ type Range struct {
 	End   int
 }
 
+func (r Range) Contains(n int) bool {
+	return n >= r.Start && n <= r.End
+}
+
 func ParseRanges(ranges []string) ([]Range, error) {
 	parsedRanges := make([]Range, len(ranges))
 	for i, rangeStr := range ranges {
