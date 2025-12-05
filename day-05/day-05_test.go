@@ -79,3 +79,27 @@ func TestRange_Contains(t *testing.T) {
 		t.Errorf("Expected range 3-5 not to contain 7")
 	}
 }
+
+func TestOptimisedRanges(t *testing.T) {
+	tests := []struct {
+		name   string
+		ranges []Range
+		want   []Range
+	}{
+		{name: "Should be unmodified if ranges don't overlap with each other",
+			ranges: []Range{{1, 5}, {8, 12}}, want: []Range{{1, 5}, {8, 12}}},
+		{name: "Ranges that are completely covered by another range should be deleted",
+			ranges: []Range{{1, 20}, {7, 11}}, want: []Range{{1, 20}}},
+		{name: "Contiguous ranges should be combined",
+			ranges: []Range{{1, 5}, {5, 10}, Range{10, 15}}, want: []Range{{1, 15}}},
+		{name: "Overlapping ranges should be combined", ranges: []Range{{1, 7}, {5, 10}}, want: []Range{{1, 10}}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := optimizedRanges(tt.ranges)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Got %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

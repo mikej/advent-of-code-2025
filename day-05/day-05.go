@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -20,6 +21,8 @@ func main() {
 		fmt.Println("Error parsing ranges", err)
 		return
 	}
+	ranges = optimizedRanges(ranges)
+
 	ids, err := ParseIds(idStrings)
 	if err != nil {
 		fmt.Println("Error parsing ids", err)
@@ -32,7 +35,53 @@ func main() {
 		}
 	}
 
-	fmt.Printf("Count of fresh items: %d\n", count)
+	fmt.Printf("Count of items for part 1: %d\n", count)
+
+	availableCount := 0
+	for _, r := range ranges {
+		availableCount += r.Size()
+	}
+
+	fmt.Println("Part 2 total available items:", availableCount)
+}
+
+func optimizedRanges(ranges []Range) []Range {
+	toDelete := []int{}
+
+outer:
+	for i, r := range ranges {
+		for j, other := range ranges {
+			if i == j || slices.Contains(toDelete, j) {
+				continue
+			}
+
+			if r.Start >= other.Start && r.End <= other.End {
+				toDelete = append(toDelete, i)
+				continue outer
+			}
+
+			if r.Start <= other.End && r.Start >= other.Start && r.End >= other.End {
+				ranges[j].End = r.End
+				toDelete = append(toDelete, i)
+				continue outer
+			}
+
+			if other.End >= r.End && r.End >= other.Start && other.Start >= r.Start {
+				ranges[j].Start = r.Start
+				toDelete = append(toDelete, i)
+				continue outer
+			}
+		}
+	}
+
+	optimised := make([]Range, 0, len(ranges)-len(toDelete))
+	for i, r := range ranges {
+		if !slices.Contains(toDelete, i) {
+			optimised = append(optimised, r)
+		}
+	}
+
+	return optimised
 }
 
 func isAvailable(id int, ranges []Range) bool {
@@ -58,6 +107,10 @@ type Range struct {
 
 func (r Range) Contains(n int) bool {
 	return n >= r.Start && n <= r.End
+}
+
+func (r Range) Size() int {
+	return r.End - r.Start + 1
 }
 
 func ParseRanges(ranges []string) ([]Range, error) {
