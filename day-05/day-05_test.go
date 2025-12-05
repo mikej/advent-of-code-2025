@@ -1,6 +1,7 @@
 package main
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -76,5 +77,17 @@ func TestRange_Contains(t *testing.T) {
 
 	if r.Contains(7) {
 		t.Errorf("Expected range 3-5 not to contain 7")
+	}
+}
+
+func TestRange_Values(t *testing.T) {
+	r := Range{Start: 3, End: 5}
+
+	if len(r.Values()) != 3 {
+		t.Errorf("Expected range to contain 3 values, got %d", len(r.Values()))
+	}
+
+	if !reflect.DeepEqual(r.Values(), []int{3, 4, 5}) {
+		t.Errorf("Expected range 3-5 to contain 3, 4, 5")
 	}
 }
