@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/mikej/advent-of-code-2025/shared/input"
 )
@@ -22,17 +23,17 @@ func main() {
 
 func SolvePart1(lines []string) int {
 	numberLines, operatorLine := lines[:len(lines)-1], lines[len(lines)-1]
-	
+
 	separator := regexp.MustCompile(`\s+`)
 
-	operators := separator.Split(operatorLine, -1)
+	operators := separator.Split(strings.TrimSpace(operatorLine), -1)
 	calculations := len(operators)
 
 	numbers := make([][]int, len(numberLines))
 	for n, line := range numberLines {
-		strings := separator.Split(line, -1)
-		ints := make([]int, len(strings))
-		for i, s := range strings {
+		numberStrings := separator.Split(line, -1)
+		ints := make([]int, len(numberStrings))
+		for i, s := range numberStrings {
 			num, _ := strconv.Atoi(s)
 			ints[i] = num
 		}
