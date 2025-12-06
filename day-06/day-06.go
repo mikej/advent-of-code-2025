@@ -42,17 +42,13 @@ func SolvePart1(operatorLine string, numberLines []string) int {
 	grandTotal := 0
 	for i := 0; i < calculations; i++ {
 		totalSoFar := numbers[0][i]
-		fmt.Print(totalSoFar)
 		for j := 1; j < len(numbers); j++ {
 			if operators[i] == "+" {
-				fmt.Printf(" + %d", numbers[j][i])
 				totalSoFar += numbers[j][i]
 			} else if operators[i] == "*" {
-				fmt.Printf(" * %d", numbers[j][i])
 				totalSoFar *= numbers[j][i]
 			}
 		}
-		fmt.Printf(" = %d\n", totalSoFar)
 		grandTotal += totalSoFar
 	}
 	return grandTotal
