@@ -9,9 +9,6 @@ import (
 )
 
 func main() {
-
-	separator := regexp.MustCompile(`\s+`)
-
 	lines, err := input.ReadFromFile("/Users/mike/Downloads/input-day-6.txt")
 	if err != nil {
 		fmt.Println("Error reading file:", err)
@@ -19,6 +16,14 @@ func main() {
 	}
 
 	numberLines, operatorLine := lines[:len(lines)-1], lines[len(lines)-1]
+
+	grandTotal := SolvePart1(operatorLine, numberLines)
+
+	fmt.Println("Grand total is", grandTotal)
+}
+
+func SolvePart1(operatorLine string, numberLines []string) int {
+	separator := regexp.MustCompile(`\s+`)
 
 	operators := separator.Split(operatorLine, -1)
 	calculations := len(operators)
@@ -50,6 +55,5 @@ func main() {
 		fmt.Printf(" = %d\n", totalSoFar)
 		grandTotal += totalSoFar
 	}
-
-	fmt.Println("Grand total is", grandTotal)
+	return grandTotal
 }
