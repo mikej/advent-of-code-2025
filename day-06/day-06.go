@@ -15,14 +15,14 @@ func main() {
 		return
 	}
 
-	numberLines, operatorLine := lines[:len(lines)-1], lines[len(lines)-1]
-
-	grandTotal := SolvePart1(operatorLine, numberLines)
+	grandTotal := SolvePart1(lines)
 
 	fmt.Println("Grand total is", grandTotal)
 }
 
-func SolvePart1(operatorLine string, numberLines []string) int {
+func SolvePart1(lines []string) int {
+	numberLines, operatorLine := lines[:len(lines)-1], lines[len(lines)-1]
+	
 	separator := regexp.MustCompile(`\s+`)
 
 	operators := separator.Split(operatorLine, -1)
