@@ -16,9 +16,8 @@ func main() {
 		return
 	}
 
-	grandTotal := SolvePart1(lines)
-
-	fmt.Println("Grand total is", grandTotal)
+	fmt.Println("Part 1 total is", SolvePart1(lines))
+	fmt.Println("Part 2 total is", SolvePart2(lines))
 }
 
 func SolvePart1(lines []string) int {
@@ -53,4 +52,8 @@ func SolvePart1(lines []string) int {
 		grandTotal += totalSoFar
 	}
 	return grandTotal
+}
+
+func SolvePart2(lines []string) int {
+	return 0
 }
