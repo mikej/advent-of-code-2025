@@ -7,8 +7,14 @@ import (
 )
 
 type Beam struct {
-	x        int
-	hasSplit bool
+	x          int
+	hasSplit   bool
+	worldCount int
+}
+
+func (b *Beam) Split() {
+	b.hasSplit = true
+	b.worldCount = 0
 }
 
 type Splitter struct {
@@ -20,6 +26,7 @@ type Manifold struct {
 	splitters []Splitter
 	rows      int
 	splits    int
+	worlds    int
 }
 
 func NewManifold(input []string) (*Manifold, error) {
@@ -28,7 +35,7 @@ func NewManifold(input []string) (*Manifold, error) {
 	for y, line := range input {
 		for x, char := range line {
 			if char == 'S' {
-				beams = append(beams, Beam{x, false})
+				beams = append(beams, Beam{x, false, 1})
 			} else if char == '^' {
 				splitters = append(splitters, Splitter{x, y})
 			} else if char != '.' {
@@ -36,7 +43,7 @@ func NewManifold(input []string) (*Manifold, error) {
 			}
 		}
 	}
-	return &Manifold{beams, splitters, len(input), 0}, nil
+	return &Manifold{beams, splitters, len(input), 0, 1}, nil
 }
 
 func (m *Manifold) Run() {
@@ -49,14 +56,18 @@ func (m *Manifold) Run() {
 				if row == splitter.y {
 					if beam.x == splitter.x {
 						m.splits++
-						
-						m.beams[i].hasSplit = true
+						m.worlds += beam.worldCount
+
+						worldsBeforeSplit := beam.worldCount
+						m.beams[i].Split()
 
 						left := m.beamForColumn(beam.x - 1)
 						left.hasSplit = false
+						left.worldCount += worldsBeforeSplit
 
 						right := m.beamForColumn(beam.x + 1)
 						right.hasSplit = false
+						right.worldCount += worldsBeforeSplit
 
 						break
 					}
@@ -73,7 +84,7 @@ func (m *Manifold) beamForColumn(col int) *Beam {
 		}
 	}
 
-	newBeam := Beam{col, false}
+	newBeam := Beam{col, false, 0}
 	m.beams = append(m.beams, newBeam)
 	return &m.beams[len(m.beams)-1]
 }
@@ -82,8 +93,8 @@ func (m *Manifold) SplitCount() int {
 	return m.splits
 }
 
-func (m *Manifold) WorldCount() int {
-	return 0
+func (m *Manifold) TimelineCount() int {
+	return m.worlds
 }
 
 func main() {
@@ -99,4 +110,5 @@ func main() {
 	}
 	manifold.Run()
 	fmt.Println("Total number of splits is", manifold.SplitCount())
+	fmt.Println("Total number of timelines is", manifold.TimelineCount())
 }
