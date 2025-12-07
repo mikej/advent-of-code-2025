@@ -22,7 +22,11 @@ func TestWithExampleData(t *testing.T) {
 		"...............",
 	}
 
-	manifold := NewManifold(input)
+	manifold, error := NewManifold(input)
+	if error != nil {
+		t.Errorf("Unexpected error parsing input: %v", error)
+		return
+	}
 	manifold.Run()
 	if manifold.SplitCount() != 21 {
 		t.Errorf("Expected 21, got %d", manifold.SplitCount())
