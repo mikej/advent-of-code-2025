@@ -19,6 +19,7 @@ type Manifold struct {
 	beams     []Beam
 	splitters []Splitter
 	rows      int
+	splits    int
 }
 
 func NewManifold(input []string) (*Manifold, error) {
@@ -35,7 +36,7 @@ func NewManifold(input []string) (*Manifold, error) {
 			}
 		}
 	}
-	return &Manifold{beams, splitters, len(input)}, nil
+	return &Manifold{beams, splitters, len(input), 0}, nil
 }
 
 func (m *Manifold) Run() {
@@ -47,13 +48,16 @@ func (m *Manifold) Run() {
 			for _, splitter := range m.splitters {
 				if row == splitter.y {
 					if beam.x == splitter.x {
+						m.splits++
+						
 						m.beams[i].hasSplit = true
-						if !m.isExistingBeamInColumn(beam.x - 1) {
-							m.beams = append(m.beams, Beam{splitter.x - 1, false})
-						}
-						if !m.isExistingBeamInColumn(beam.x + 1) {
-							m.beams = append(m.beams, Beam{splitter.x + 1, false})
-						}
+
+						left := m.beamForColumn(beam.x - 1)
+						left.hasSplit = false
+
+						right := m.beamForColumn(beam.x + 1)
+						right.hasSplit = false
+
 						break
 					}
 				}
@@ -71,14 +75,20 @@ func (m *Manifold) isExistingBeamInColumn(col int) bool {
 	return false
 }
 
-func (m *Manifold) SplitCount() int {
-	count := 0
-	for _, beam := range m.beams {
-		if beam.hasSplit {
-			count++
+func (m *Manifold) beamForColumn(col int) *Beam {
+	for i, beam := range m.beams {
+		if beam.x == col {
+			return &m.beams[i]
 		}
 	}
-	return count
+
+	newBeam := Beam{col, false}
+	m.beams = append(m.beams, newBeam)
+	return &m.beams[len(m.beams)-1]
+}
+
+func (m *Manifold) SplitCount() int {
+	return m.splits
 }
 
 func main() {
