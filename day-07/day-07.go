@@ -91,6 +91,10 @@ func (m *Manifold) SplitCount() int {
 	return m.splits
 }
 
+func (m *Manifold) WorldCount() int {
+	return 0
+}
+
 func main() {
 	lines, err := input.ReadFromFile("/Users/mike/Downloads/input-day-7.txt")
 	if err != nil {
