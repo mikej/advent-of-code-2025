@@ -66,15 +66,6 @@ func (m *Manifold) Run() {
 	}
 }
 
-func (m *Manifold) isExistingBeamInColumn(col int) bool {
-	for _, beam := range m.beams {
-		if beam.x == col && !beam.hasSplit {
-			return true
-		}
-	}
-	return false
-}
-
 func (m *Manifold) beamForColumn(col int) *Beam {
 	for i, beam := range m.beams {
 		if beam.x == col {
