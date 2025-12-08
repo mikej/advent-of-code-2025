@@ -19,6 +19,15 @@ type JunctionBoxPair struct {
 	distance   int
 }
 
+type Playground struct {
+	boxes []Coord
+}
+
+func NewPlayground(lines []string) *Playground {
+	coords := parseCoords(lines)
+	return &Playground{coords}
+}
+
 func main() {
 	lines, err := input.ReadFromFile("/Users/mike/Downloads/input-day-8.txt")
 	if err != nil {
@@ -26,21 +35,37 @@ func main() {
 		return
 	}
 
-	result := SolvePart1(lines, 1000)
+	pg := NewPlayground(lines)
 
-	fmt.Println("Result:", result)
+	fmt.Println("Part 1:", pg.SolvePart1(1000))
+	fmt.Println("Part 2:", pg.SolvePart2())
 }
 
-func SolvePart1(lines []string, circuitCount int) int {
-	coords := parseCoords(lines)
-	distances := buildDistances(coords)
-	circuits := buildCircuits(distances, circuitCount)
-	largesCircuits := findLargest(circuits, 3)
+func (pg *Playground) SolvePart1(circuitCount int) int {
+	distances := pg.buildDistances(pg.boxes)
+	circuits, _ := pg.buildCircuits(distances, circuitCount, 1)
+	largesCircuits := pg.findLargest(circuits, 3)
 
 	return largesCircuits[0] * largesCircuits[1] * largesCircuits[2]
 }
 
-func findLargest(circuits map[Coord]int, n int) []int {
+func (pg *Playground) SolvePart2() int {
+	distances := pg.buildDistances(pg.boxes)
+	_, lastJunctionBoxAdded := pg.buildCircuits(distances, 0, 2)
+
+	return lastJunctionBoxAdded.box1.x * lastJunctionBoxAdded.box2.x
+}
+
+func (pg *Playground) findLargest(circuits map[Coord]int, n int) []int {
+	sizes := pg.buildCircuitSizes(circuits)
+
+	slices.Sort(sizes)
+	slices.Reverse(sizes)
+
+	return sizes[:n]
+}
+
+func (pg *Playground) buildCircuitSizes(circuits map[Coord]int) []int {
 	sizeMap := make(map[int]int)
 	for _, id := range circuits {
 		sizeMap[id]++
@@ -49,16 +74,15 @@ func findLargest(circuits map[Coord]int, n int) []int {
 	for _, size := range sizeMap {
 		sizes = append(sizes, size)
 	}
-
-	slices.Sort(sizes)
-	slices.Reverse(sizes)
-
-	return sizes[:n]
+	return sizes
 }
 
-func buildCircuits(distances []JunctionBoxPair, n int) map[Coord]int {
+func (pg *Playground) buildCircuits(distances []JunctionBoxPair, n, part int) (map[Coord]int, JunctionBoxPair) {
 	circuits := make(map[Coord]int)
+
 	var currentCircuitId int
+	var lastJunctionBoxPairAdded JunctionBoxPair
+
 	for i, nextJoin := range distances {
 		circuitId1, inCircuit1 := circuits[nextJoin.box1]
 		circuitId2, inCircuit2 := circuits[nextJoin.box2]
@@ -82,15 +106,24 @@ func buildCircuits(distances []JunctionBoxPair, n int) map[Coord]int {
 			currentCircuitId++
 		}
 
-		if i >= n-1 {
+		lastJunctionBoxPairAdded = nextJoin
+
+		if part == 1 && i >= n-1 {
 			break
 		}
 
+		if part == 2 {
+			sizes := pg.buildCircuitSizes(circuits)
+			if len(sizes) == 1 && sizes[0] == len(pg.boxes) {
+				break
+			}
+		}
+
 	}
-	return circuits
+	return circuits, lastJunctionBoxPairAdded
 }
 
-func buildDistances(coords []Coord) []JunctionBoxPair {
+func (pg *Playground) buildDistances(coords []Coord) []JunctionBoxPair {
 	var distances []JunctionBoxPair
 	for i, a := range coords {
 		for j, b := range coords {

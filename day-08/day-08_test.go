@@ -34,9 +34,19 @@ func TestParseCoords(t *testing.T) {
 }
 
 func TestSolvePart1(t *testing.T) {
-	got := SolvePart1(example, 10)
+	pg := NewPlayground(example)
+	got := pg.SolvePart1(10)
 
 	if got != 40 {
 		t.Errorf("Expected multiplying together the 3 largest circuits to give 40, got %d", got)
+	}
+}
+
+func TestSolvePart2(t *testing.T) {
+	pg := NewPlayground(example)
+	got := pg.SolvePart2()
+
+	if got != 25272 {
+		t.Errorf("Expected multiplying together the x coordinates to give 25272, got %d", got)
 	}
 }
